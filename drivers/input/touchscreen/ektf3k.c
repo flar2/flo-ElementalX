@@ -216,15 +216,15 @@ bool scr_suspended = false;
 int tripon = 0;
 int tripoff = 0;
 unsigned long triptime = 0;
-unsigned long initial_time = 0;
 unsigned long dt2w_time[2] = {0, 0};
 unsigned int dt2w_x[2] = {0, 0};
 unsigned int dt2w_y[2] = {0, 0};
 int status[2] = {0,0};
+int dt2w_count = 0;
 #define S2W_TIMEOUT 75
 #define DT2W_TIMEOUT_MAX 40
-#define DT2W_TIMEOUT_MIN 12
-#define DT2W_DELTA 75
+#define DT2W_TIMEOUT_MIN 8
+#define DT2W_DELTA 60
 
 void sweep2wake_setdev(struct input_dev * input_device) {
 	sweep2wake_pwrdev = input_device;
@@ -233,31 +233,32 @@ void sweep2wake_setdev(struct input_dev * input_device) {
 
 EXPORT_SYMBOL(sweep2wake_setdev);
 
-
-static void reset_sweep2wake(void)
+static void reset_sweep2wake(int s2w, int dt2w)
 {
 	//reset sweep2wake
-	tripoff = 0;
-	tripon = 0;
-	triptime = 0;
+	if (s2w) {
+		tripoff = 0;
+		tripon = 0;
+		triptime = 0;
+	}
 
 	//reset doubletap2wake
-	dt2w_time[0] = 0;
-	dt2w_x[0] = 0;
-	dt2w_y[0] = 0;
-	dt2w_time[1] = 0;
-	dt2w_x[1] = 0;
-	dt2w_y[1] = 0;
-	initial_time = 0;
-	
+	if (dt2w) {
+		dt2w_time[0] = 0;
+		dt2w_x[0] = 0;
+		dt2w_y[0] = 0;
+		dt2w_time[1] = 0;
+		dt2w_x[1] = 0;
+		dt2w_y[1] = 0;
+		dt2w_count = 0;
+	}
+
 	return;
 }
 
-
-
 static void sweep2wake_presspwr(struct work_struct *sweep2wake_presspwr_work)
 {
-	reset_sweep2wake();
+	reset_sweep2wake(1,1);
 
 	input_event(sweep2wake_pwrdev, EV_KEY, KEY_POWER, 1);
 	input_event(sweep2wake_pwrdev, EV_SYN, 0, 0);
@@ -295,12 +296,12 @@ void sweep2wake_func(int x, int y, unsigned long time, int i)
 	//printk("[sweep2wake]: x,y(%d,%d) jiffies:%lu\n", x, y, time);
 
 	if (!sametouch){
-		reset_sweep2wake();
+		reset_sweep2wake(1,0);
 		return;
 	}
 
 	//left->right
-	if ((scr_suspended == true) && (s2w_switch == 1) && x > 2000) {
+	if (scr_suspended == true && s2w_switch == 1) {
 		if (y < 100) {
 			tripon = 1;
 			triptime = time;
@@ -313,7 +314,7 @@ void sweep2wake_func(int x, int y, unsigned long time, int i)
 			sweep2wake_pwrtrigger();
 		} 			
 	//right->left
-	} else if ((scr_suspended == false) && (s2w_switch > 0) && x > 2000) {
+	} else if (scr_suspended == false && s2w_switch > 0 && x > 2000) {
 		if (y > 1250) {
 			tripoff = 1;
 			triptime = time;
@@ -329,25 +330,30 @@ void sweep2wake_func(int x, int y, unsigned long time, int i)
 
 }
 
-void doubletap2wake_func(int x, int y, unsigned long time)
+void doubletap2wake_func(int x, int y)
 {
 
 	int delta_x = 0;
 	int delta_y = 0;
 
-	//printk("[dt2wake]: x,y(%d,%d) jiffies:%lu\n", x, y, time);
+	dt2w_count++;
+
+	//printk("dt2w: time=%lu\n", jiffies);
 
         dt2w_time[1] = dt2w_time[0];
-        dt2w_time[0] = time;
+        dt2w_time[0] = jiffies;
 
-	if (!initial_time)
-		initial_time = time;	
+	if ((dt2w_time[0] - dt2w_time[1]) > 45) {
+		dt2w_count = 0;
+		//printk("dt2w: reset dt2w_count\n");
+	}
 
-	if (time - initial_time > 800)
-		reset_sweep2wake();
-	
-	if ((dt2w_time[0] - dt2w_time[1]) < 10)
+	if ((dt2w_time[0] - dt2w_time[1]) < 8 || dt2w_count > 1) {
+		//printk("dt2w: too fast, dt2w_count=%d\n", dt2w_count);
 		return;
+	} else {
+		dt2w_count = 0;
+	}
 
 	dt2w_x[1] = dt2w_x[0];
        	dt2w_x[0] = x;
@@ -357,18 +363,23 @@ void doubletap2wake_func(int x, int y, unsigned long time)
 	delta_x = (dt2w_x[0]-dt2w_x[1]);
 	delta_y = (dt2w_y[0]-dt2w_y[1]);
 
-        if (scr_suspended && dt2w_switch == 1) {
-		if (
-			y > 50 && y < 1300
-			&& ((dt2w_time[0] - initial_time) > DT2W_TIMEOUT_MIN)
-			&& ((dt2w_time[0] - initial_time) < DT2W_TIMEOUT_MAX)
-			&& (abs(delta_x) < DT2W_DELTA)
-			&& (abs(delta_y) < DT2W_DELTA)
-			) {
-                        printk("[DT2W]: OFF->ON\n");
+	if ((abs(delta_x) < DT2W_DELTA) && (abs(delta_y) < DT2W_DELTA)) {
+
+		if (y > 50 && y < 1300
+			 && ((dt2w_time[0] - dt2w_time[1]) > DT2W_TIMEOUT_MIN)
+			 && ((dt2w_time[0] - dt2w_time[1]) < DT2W_TIMEOUT_MAX)) {
+
+                        //printk("[dt2w]: OFF->ON\n");
                         sweep2wake_pwrtrigger();
+
+		} else {
+			//printk("dt2w: wrong time\n");
 		}
+
+	} else {
+		//printk("dt2w: wrong spot\n");
 	}
+
         return;
 }
 
@@ -1282,7 +1293,7 @@ static void elan_ktf3k_ts_report_data2(struct i2c_client *client, uint8_t *buf)
 			   if (s2w_switch > 0)
 				  sweep2wake_func(x, y, jiffies, i);
 			   if (dt2w_switch && scr_suspended)	
-				  doubletap2wake_func(x, y, jiffies);
+				  doubletap2wake_func(x, y);
 /* end sweep2wake */
 		  }
 	      }
