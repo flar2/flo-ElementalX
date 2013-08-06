@@ -50,10 +50,10 @@
 /** elementalx defs  **/
 
 int uv_bin = 0;
-uint32_t arg_max_oc0 = 1512000;
-uint32_t arg_max_oc1 = 1512000;
-uint32_t arg_max_oc2 = 1512000;
-uint32_t arg_max_oc3 = 1512000;
+uint32_t arg_max_oc0 = 1728000;
+uint32_t arg_max_oc1 = 1728000;
+uint32_t arg_max_oc2 = 1728000;
+uint32_t arg_max_oc3 = 1728000;
 
 /* boot arg max_oc */
 static int __init cpufreq_read_arg_max_oc0(char *max_oc0)
@@ -1079,7 +1079,7 @@ void acpuclk_set_vdd(unsigned int khz, int vdd_uv) {
 #endif	/* CONFIG_CPU_VOTALGE_TABLE */
 
 #ifdef CONFIG_CPU_FREQ_MSM
-static struct cpufreq_frequency_table freq_table[NR_CPUS][35];
+static struct cpufreq_frequency_table freq_table[NR_CPUS][46];
 
 static void __init cpufreq_table_init(void)
 {
