@@ -301,10 +301,7 @@ void __init apq8064_init_gpu(void)
 		kgsl_3d0_pdata.pwrlevel[0].gpu_freq = 487500000;
 
 	if (max_gpu == 2)
-		kgsl_3d0_pdata.pwrlevel[0].gpu_freq = 533333300;
-
-	if (max_gpu == 3)
-		kgsl_3d0_pdata.pwrlevel[0].gpu_freq = 600000000;
+		kgsl_3d0_pdata.pwrlevel[0].gpu_freq = 533333000;
 
 	if (cpu_is_apq8064ab())
 		kgsl_3d0_pdata.pwrlevel[0].gpu_freq = 450000000;
