@@ -1032,7 +1032,7 @@ static void __init bus_init(const struct l2_level *l2_level)
 
 #ifdef CONFIG_CPU_VOLTAGE_TABLE
 
-#define HFPLL_MIN_VDD		 800000
+#define HFPLL_MIN_VDD		 700000
 #define HFPLL_MAX_VDD		1350000
 
 ssize_t acpuclk_get_vdd_levels_str(char *buf) {
@@ -1043,7 +1043,6 @@ ssize_t acpuclk_get_vdd_levels_str(char *buf) {
 		mutex_lock(&driver_lock);
 
 		for (i = 0; drv.acpu_freq_tbl[i].speed.khz; i++) {
-			/* updated to use uv required by 8x60 architecture - faux123 */
 			len += sprintf(buf + len, "%8lu: %8d\n", drv.acpu_freq_tbl[i].speed.khz,
 				drv.acpu_freq_tbl[i].vdd_core );
 		}
@@ -1053,7 +1052,6 @@ ssize_t acpuclk_get_vdd_levels_str(char *buf) {
 	return len;
 }
 
-/* updated to use uv required by 8x60 architecture - faux123 */
 void acpuclk_set_vdd(unsigned int khz, int vdd_uv) {
 
 	int i;
@@ -1073,7 +1071,6 @@ void acpuclk_set_vdd(unsigned int khz, int vdd_uv) {
 
 		drv.acpu_freq_tbl[i].vdd_core = new_vdd_uv;
 	}
-	pr_warn("faux123: user voltage table modified!\n");
 	mutex_unlock(&driver_lock);
 }
 #endif	/* CONFIG_CPU_VOTALGE_TABLE */
