@@ -36,7 +36,6 @@ struct msm_spm_device {
 	struct msm_spm_driver_data reg_data;
 	struct msm_spm_power_modes *modes;
 	uint32_t num_modes;
-	uint32_t cpu_vdd;
 };
 
 struct msm_spm_vdd_info {
@@ -55,7 +54,6 @@ static void msm_spm_smp_set_vdd(void *data)
 	struct msm_spm_vdd_info *info = (struct msm_spm_vdd_info *)data;
 
 	dev = &per_cpu(msm_cpu_spm_device, info->cpu);
-	dev->cpu_vdd = info->vlevel;
 	info->err = msm_spm_drv_set_vdd(&dev->reg_data, info->vlevel);
 }
 
@@ -98,7 +96,7 @@ unsigned int msm_spm_get_vdd(unsigned int cpu)
 	struct msm_spm_device *dev;
 
 	dev = &per_cpu(msm_cpu_spm_device, cpu);
-	return dev->cpu_vdd;
+	return msm_spm_drv_get_sts_curr_pmic_data(&dev->reg_data);
 }
 EXPORT_SYMBOL(msm_spm_get_vdd);
 
