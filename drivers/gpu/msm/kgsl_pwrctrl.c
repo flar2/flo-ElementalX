@@ -35,7 +35,7 @@
 #define UPDATE_BUSY_VAL		1000000
 #define UPDATE_BUSY		50
 
-unsigned long internal_max = 487500000;
+unsigned long internal_max = 450000000;
 
 struct clk_pair {
 	const char *name;
@@ -397,38 +397,31 @@ static int kgsl_pwrctrl_max_gpuclk_store(struct device *dev,
 
 	if (max_gpu) {
 
-	if (val == 447000000)
-	{
-		SetGPUpll_config(0x21, val);
-	}
-	else if (val == 487500000)
-	{
-		SetGPUpll_config(0x24, val);
-	}
-	else if (val == 501000000)
-	{
-		SetGPUpll_config(0x25, val);
-	}
-	else if (val == 528000000)
-	{
-		SetGPUpll_config(0x27, val);
-	}
-	else if (val == 555000000)
-	{
-		SetGPUpll_config(0x29, val);
-	}
-	else if (val == 582000000)
-	{
-		SetGPUpll_config(0x2B, val);
-	}
-	else if (val == 595500000)
-	{
-		SetGPUpll_config(0x2C, val);
-	}
+		if (val == 450000000) {
+			SetGPUpll_config(0x21, val);
+		}
+		else if (val == 477000000) {
+			SetGPUpll_config(0x23, val);
+		}
+		else if (val == 490500000) {
+			SetGPUpll_config(0x24, val);
+		}
+		else if (val == 504000000) {
+			SetGPUpll_config(0x25, val);
+		}
+		else if (val == 531000000) {
+			SetGPUpll_config(0x27, val);
+		}
+		else if (val == 558000000) {
+			SetGPUpll_config(0x29, val);
+		}
+		else if (val == 585000000) {
+			SetGPUpll_config(0x2B, val);
+		}
+	
+		internal_max = val;
 
-	internal_max = val;
-
-	}	
+	}
 	
 	mutex_lock(&device->mutex);
 	level = _get_nearest_pwrlevel(pwr, val);
@@ -660,15 +653,15 @@ static int kgsl_pwrctrl_gpu_available_frequencies_show(
 	pwr = &device->pwrctrl;
 	for (index = 0; index < pwr->num_pwrlevels - 1; index++)
 
-		if (index == 0 || !max_gpu)
+		if (index == 0 && max_gpu)
 		{
-			num_chars += snprintf(buf + num_chars, PAGE_SIZE, "%d ",595500000);
-			num_chars += snprintf(buf + num_chars, PAGE_SIZE, "%d ",582000000);
-			num_chars += snprintf(buf + num_chars, PAGE_SIZE, "%d ",555000000);
-			num_chars += snprintf(buf + num_chars, PAGE_SIZE, "%d ",528000000);
-			num_chars += snprintf(buf + num_chars, PAGE_SIZE, "%d ",501000000);
-			num_chars += snprintf(buf + num_chars, PAGE_SIZE, "%d ",487500000);
-			num_chars += snprintf(buf + num_chars, PAGE_SIZE, "%d ",447000000);
+			num_chars += snprintf(buf + num_chars, PAGE_SIZE, "%d ",585000000);
+			num_chars += snprintf(buf + num_chars, PAGE_SIZE, "%d ",558000000);
+			num_chars += snprintf(buf + num_chars, PAGE_SIZE, "%d ",531000000);
+			num_chars += snprintf(buf + num_chars, PAGE_SIZE, "%d ",504000000);
+			num_chars += snprintf(buf + num_chars, PAGE_SIZE, "%d ",490500000);
+			num_chars += snprintf(buf + num_chars, PAGE_SIZE, "%d ",477000000);
+			num_chars += snprintf(buf + num_chars, PAGE_SIZE, "%d ",450000000);
 		}
 		else
 			num_chars += snprintf(buf + num_chars, PAGE_SIZE, "%d ",pwr->pwrlevels[index].gpu_freq);

@@ -3531,6 +3531,12 @@ static struct clk_freq_tbl clk_tbl_gfx3d[] = {
 	F_GFX3D(320000000, pll2,  2,  5),
 	F_GFX3D(400000000, pll2,  1,  2),
 	F_GFX3D(450000000, pll15, 1,  2),
+	F_GFX3D(477000000, pll15, 1,  2),
+	F_GFX3D(490500000, pll15, 1,  2),
+	F_GFX3D(504000000, pll15, 1,  2),
+	F_GFX3D(531000000, pll15, 1,  2),
+	F_GFX3D(558000000, pll15, 1,  2),
+	F_GFX3D(585000000, pll15, 1,  2),
 	F_END
 };
 
@@ -6344,9 +6350,9 @@ static struct pll_config_regs pll15_regs = {
 };
 
 static struct pll_config pll15_config = {
-	.l = (0x24 | BVAL(31, 7, 0x620)),
+	.l = (0x21 | BVAL(31, 7, 0x620)),
 	.m = 0x1,
-	.n = 0x9,
+	.n = 0x3,
 	.vco_val = BVAL(17, 16, 0x2),
 	.vco_mask = BM(17, 16),
 	.pre_div_val = 0x0,
@@ -6608,7 +6614,7 @@ void __ref SetGPUpll_config(u32 loc, unsigned long freq)
 {
 	pll15_config.l = (loc | BVAL(31, 7, 0x620));
 	pll15_config.m = 0x1;
-	pll15_config.n = 0x9;
+	pll15_config.n = 0x3;
 	configure_pllOC(&pll15_config, &pll15_regs, 0);
 	printk("ElementalX: set GPU OC %ld", freq / 1000000);
 }
