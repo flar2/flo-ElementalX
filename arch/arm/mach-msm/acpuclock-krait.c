@@ -55,6 +55,9 @@ uint32_t arg_max_oc1 = 1512000;
 uint32_t arg_max_oc2 = 1512000;
 uint32_t arg_max_oc3 = 1512000;
 
+int pvs_number = 0;
+module_param(pvs_number, int, 0755); 
+
 /* boot arg max_oc */
 static int __init cpufreq_read_arg_max_oc0(char *max_oc0)
 {
@@ -1251,6 +1254,8 @@ static int __init get_pvs_bin(u32 pte_efuse)
 	} else {
 		dev_info(drv.dev, "ACPU PVS: %d\n", pvs_bin);
 	}
+	
+	pvs_number = pvs_bin;
 
 	return pvs_bin;
 }
