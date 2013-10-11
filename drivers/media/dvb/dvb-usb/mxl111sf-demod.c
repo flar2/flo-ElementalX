@@ -480,7 +480,7 @@ static int mxl111sf_demod_read_signal_strength(struct dvb_frontend *fe,
 					       u16 *signal_strength)
 {
 	struct mxl111sf_demod_state *state = fe->demodulator_priv;
-	fe_modulation_t modulation;
+	fe_modulation_t modulation = 0;
 	u16 snr;
 
 	mxl111sf_demod_calc_snr(state, &snr);

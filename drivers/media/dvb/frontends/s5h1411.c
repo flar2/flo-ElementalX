@@ -801,7 +801,7 @@ static int s5h1411_read_signal_strength(struct dvb_frontend *fe,
 	 * there is some comfort factor in having a range of
 	 * strong signals that can show at 100%
 	 */
-	u16 snr;
+	u16 snr = 0;
 	u32 tmp;
 	int ret = s5h1411_read_snr(fe, &snr);
 

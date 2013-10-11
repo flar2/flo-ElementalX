@@ -617,7 +617,7 @@ struct dvb_frontend *cxd2820r_attach(const struct cxd2820r_config *cfg,
 {
 	struct cxd2820r_priv *priv = NULL;
 	int ret;
-	u8 tmp;
+	u8 tmp = 0;
 
 	priv = kzalloc(sizeof (struct cxd2820r_priv), GFP_KERNEL);
 	if (!priv)

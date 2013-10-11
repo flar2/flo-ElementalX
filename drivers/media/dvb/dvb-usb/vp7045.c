@@ -83,7 +83,7 @@ unlock:
 
 u8 vp7045_read_reg(struct dvb_usb_device *d, u8 reg)
 {
-	u8 obuf[2] = { 0 },v;
+	u8 obuf[2] = { 0 },v = 0;
 	obuf[1] = reg;
 
 	vp7045_usb_op(d,TUNER_REG_READ,obuf,2,&v,1,30);
@@ -156,7 +156,7 @@ static struct rc_map_table rc_map_vp7045_table[] = {
 
 static int vp7045_rc_query(struct dvb_usb_device *d, u32 *event, int *state)
 {
-	u8 key;
+	u8 key = 0;
 	int i;
 	vp7045_usb_op(d,RC_VAL_READ,NULL,0,&key,1,20);
 
@@ -179,7 +179,7 @@ static int vp7045_rc_query(struct dvb_usb_device *d, u32 *event, int *state)
 static int vp7045_read_eeprom(struct dvb_usb_device *d,u8 *buf, int len, int offset)
 {
 	int i = 0;
-	u8 v,br[2];
+	u8 v,br[2] = {0, 0};
 	for (i=0; i < len; i++) {
 		v = offset + i;
 		vp7045_usb_op(d,GET_EE_VALUE,&v,1,br,2,5);

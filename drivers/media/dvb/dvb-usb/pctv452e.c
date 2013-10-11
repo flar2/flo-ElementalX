@@ -202,7 +202,7 @@ static int tt3650_ci_read_cam_control(struct dvb_ca_en50221 *ca,
 				 int			slot,
 				 u8			address)
 {
-	u8 buf[2];
+	u8 buf[2] = {0, 0};
 	int ret;
 
 	if (0 != slot)

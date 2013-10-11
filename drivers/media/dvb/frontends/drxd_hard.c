@@ -979,7 +979,7 @@ static int DownloadMicrocode(struct drxd_state *state,
 static int HI_Command(struct drxd_state *state, u16 cmd, u16 * pResult)
 {
 	u32 nrRetries = 0;
-	u16 waitCmd;
+	u16 waitCmd = 0;
 	int status;
 
 	status = Write16(state, HI_RA_RAM_SRV_CMD__A, cmd, 0);

@@ -159,7 +159,7 @@ static int set_if_freq(struct atbm_state *priv, u32 freq /*in kHz*/)
 
 static int is_locked(struct atbm_state *priv, u8 *locked)
 {
-	u8 status;
+	u8 status = 0;
 
 	atbm8830_read_reg(priv, REG_LOCK_STATUS, &status);
 

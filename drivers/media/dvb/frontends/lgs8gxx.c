@@ -308,7 +308,7 @@ static int lgs8gxx_set_mode_manual(struct lgs8gxx_state *priv)
 static int lgs8gxx_is_locked(struct lgs8gxx_state *priv, u8 *locked)
 {
 	int ret = 0;
-	u8 t;
+	u8 t = 0;
 
 	if (priv->config->prod == LGS8GXX_PROD_LGS8G75)
 		ret = lgs8gxx_read_reg(priv, 0x13, &t);
@@ -735,7 +735,7 @@ static int lgs8gxx_read_status(struct dvb_frontend *fe, fe_status_t *fe_status)
 {
 	struct lgs8gxx_state *priv = fe->demodulator_priv;
 	s8 ret;
-	u8 t, locked = 0;
+	u8 t = 0, locked = 0;
 
 	dprintk("%s\n", __func__);
 	*fe_status = 0;
@@ -885,7 +885,7 @@ static int lgs8gxx_read_signal_strength(struct dvb_frontend *fe, u16 *signal)
 static int lgs8gxx_read_snr(struct dvb_frontend *fe, u16 *snr)
 {
 	struct lgs8gxx_state *priv = fe->demodulator_priv;
-	u8 t;
+	u8 t = 0;
 	*snr = 0;
 
 	if (priv->config->prod == LGS8GXX_PROD_LGS8G75)

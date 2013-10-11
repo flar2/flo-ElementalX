@@ -1103,7 +1103,7 @@ static int HI_Command(struct drxk_state *state, u16 cmd, u16 *pResult)
 	if (powerdown_cmd == false) {
 		/* Wait until command rdy */
 		u32 retryCount = 0;
-		u16 waitCmd;
+		u16 waitCmd = 0;
 
 		do {
 			msleep(1);
@@ -6301,7 +6301,7 @@ static int drxk_read_snr(struct dvb_frontend *fe, u16 *snr)
 static int drxk_read_ucblocks(struct dvb_frontend *fe, u32 *ucblocks)
 {
 	struct drxk_state *state = fe->demodulator_priv;
-	u16 err;
+	u16 err = 0;
 
 	dprintk(1, "\n");
 	DVBTQAMGetAccPktErr(state, &err);

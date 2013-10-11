@@ -448,7 +448,7 @@ static int opera1_xilinx_load_firmware(struct usb_device *dev,
 	const struct firmware *fw = NULL;
 	u8 *b, *p;
 	int ret = 0, i,fpgasize=40;
-	u8 testval;
+	u8 testval = 0;
 	info("start downloading fpga firmware %s",filename);
 
 	if ((ret = request_firmware(&fw, filename, &dev->dev)) != 0) {

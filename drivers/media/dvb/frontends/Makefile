@@ -4,6 +4,7 @@
 
 ccflags-y += -I$(srctree)/drivers/media/dvb/dvb-core/
 ccflags-y += -I$(srctree)/drivers/media/common/tuners/
+ccflags-y += -Wframe-larger-than=1200 -Wno-array-bounds -Wno-uninitialized
 
 stb0899-objs = stb0899_drv.o stb0899_algo.o
 stv0900-objs = stv0900_core.o stv0900_sw.o
